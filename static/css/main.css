@@ -1,4 +1,63 @@
-body {
-    margin: 0;
-    font-family: sans-serif;
+body, html {
+    font-family: monospace;
+    color: #00FF00;
+    background-color: black;
+    font-size: 15px;
+}
+
+.content {
+    margin-left: 5%;
+    padding: 5px;
+    width: 90%
+}
+
+table, td, th {
+    border: 1px solid #aaa;
+    padding: 3px;
+    border-color: #00FF00;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+td {
+    text-align: left;
+    padding: 5px;
+}
+
+form {
+    margin-top: 20px;
+}
+
+.input {
+    background-color: black;
+}
+
+#content {
+    font-color: #00FF00;
+}
+
+.task_input{
+
+}
+
+.distant {
+    padding: 5px;
+    color: #00FF00;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+input {
+    color: #00FF00;
+    background: black;
+    font-family: monospace;
+    font-size: 15px;
+}
+input:focus {
+outline: none !important;
+border:1px solid #00FF00;
+box-shadow: 0 0 10px #00FF00;
+
 }
