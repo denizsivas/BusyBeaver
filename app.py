@@ -71,16 +71,12 @@ def done(id):
 def my_utility_processor():
 
     def elapsed_time(then, now=datetime.now(), interval="default"):
-        print('verilen tarih ' + str(then))
-        print('şuanki tarih ' + str(now))
         duration = now - then
         duration_in_s = duration.total_seconds()
-        print('aradaki fark ' + str(duration_in_s))
         elapsed_hours = divmod(duration_in_s, 3600)
         elapsed_minutes = divmod(elapsed_hours[1], 60)
         constructed = str(elapsed_hours[0]) + ' hr ' +  str(elapsed_minutes[0]) + ' min'
         return constructed
-
     # TODO: Complete the missing portion of the timing
 
     return dict(elapsed_time=elapsed_time)
