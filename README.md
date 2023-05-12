@@ -1,9 +1,10 @@
 # BusyBeaver
-A lightweight todolist app
+![BusyBadger.png](static%2Fimg%2FBusyBadger.png)
+
+A lightweight to-do list app
 
 
 to start, create the database
-
 
 ```
 python
