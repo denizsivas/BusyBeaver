@@ -55,9 +55,35 @@ input {
     font-family: monospace;
     font-size: 15px;
 }
+
 input:focus {
 outline: none !important;
 border:1px solid #00FF00;
 box-shadow: 0 0 10px #00FF00;
+}
 
+#header {
+    width:100%;
+    padding:15px;
+}
+
+#header h1 {
+    display:inline;
+}
+
+#header ul {
+   display:inline;
+}
+
+#header ul li {
+    display:inline;
+}
+#header ul li a {
+    text-decoration:none;
+    font-size:16px;
+    font-weight:bold;
+    color: #00FF00;
+}
+#header ul li a:hover {
+    text-decoration:underline;
 }
