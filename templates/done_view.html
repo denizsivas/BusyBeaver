@@ -8,7 +8,7 @@
 <div class="content">
     {% if tasks|length < 1 %}
     <h1>Busy Beaver</h1>
-    <h4>There are no tasks. Good job!</h4>
+    <h4>There are no done tasks :(</h4>
     {% else %}
     <div id="header">
     <h1>Busy Beaver</h1>
@@ -23,26 +23,18 @@
         <tr>
             <th>Task</th>
             <th>Date Added</th>
-            <th>Time Elapsed</th>
             <th>Actions</th>
         </tr>
         {% for task in tasks %}
             <tr>
-                <td>{{ task.content}}</td>
-                <td>{{ task.date_created.date()}}</td>
-                <td>{{ elapsed_time(task.date_created) }}  </td>
+                <td>{{ task.content }}</td>
+                <td>{{ task.date_created.date() }}</td>
                 <td>
-                    <a class ="distant" href="/delete/{{task.id}}">Delete</a>
-                    <a class ="distant" href="/update/{{task.id}}">Update</a>
-                    <a class ="distant" href="/done/{{task.id}}">Done</a>
+                    <a class ="distant" href="/undone/{{task.id}}">Undone</a>
                 </td>
             </tr>
         {% endfor %}
     </table>
     {% endif %}
-    <form action="/" method="POST">
-        <input type = "text" name="content" id="content" style="outline:color;" required>
-        <input type = "submit" value = "Add Task">
-    </form>
 </div>
 {% endblock %}
