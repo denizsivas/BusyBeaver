@@ -10,15 +10,7 @@
     <h1>Busy Beaver</h1>
     <h4>There are no done tasks :(</h4>
     {% else %}
-    <div id="header">
-    <h1>Busy Beaver</h1>
-    <ul>
-        <li><a href=/>To-Do/</a></li>
-        <li><a href=/notes_view>Notes/</a></li>
-        <li><a href=/done_view>Done/</a></li>
-        <li><a href=/stats_view>Stats/</a></li>
-    </ul>
-    </div>
+    {% include 'header_section.html' %}
     <table>
         <tr>
             <th>Task</th>
