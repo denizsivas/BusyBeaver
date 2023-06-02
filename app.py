@@ -22,7 +22,7 @@ class Todo(db.Model):
 def index():
     if request.method == 'POST':
         task_content = request.form['content']
-        new_task = Todo(content=task_content)
+        new_task = Todo(content=task_content, date_created=datetime.now())
         try:
             db.session.add(new_task)
             db.session.commit()
@@ -89,6 +89,16 @@ def done_view():
     return render_template('done_view.html', tasks=tasks)
 
 
+@app.route('/reminders_view')
+def reminders_view():
+    return render_template('under_construction.html')
+
+
+@app.route('/bookmarks_view')
+def bookmarks_view():
+    return render_template('under_construction.html')
+
+
 @app.route('/notes_view')
 def notes_view():
     return render_template('under_construction.html')
@@ -110,7 +120,10 @@ def my_utility_processor():
         constructed = str(round(elapsed_hours[0])) + ' hr ' + str(round(elapsed_minutes[0])) + ' min'
         return constructed
 
-    return dict(elapsed_time=elapsed_time)
+    def date_now():
+        return datetime.now()
+
+    return dict(date_now=date_now, elapsed_time=elapsed_time)
 
 
 if __name__ == "__main__":
