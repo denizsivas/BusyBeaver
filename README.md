@@ -12,7 +12,7 @@ It tracks your,
  * statistics of productivity
 
 # How to start?
-1. Create the database with below commands
+1. Create the databases with below commands
 
 ```
 python

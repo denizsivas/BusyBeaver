@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block body %}
+<div class="content">
+    {% if bookmarks|length < 1 %}
+    <h1>Busy Beaver</h1>
+    <h4>There are no bookmarks yet. :(</h4>
+    {% else %}
+    {% include 'header_section.html' %}
+    <table>
+        <tr>
+            <th>Bookmark</th>
+            <th>Date Added</th>
+            <th>Comment</th>
+            <th>Actions</th>
+        </tr>
+        {% for bookmark in bookmarks %}
+            <tr>
+                <td>{{ bookmark.content }}</td>
+                <td>{{ bookmark.date_created.date() }}</td>
+                <td>{{ bookmark.comment }}</td>
+                <td>
+                    <a class ="distant" href="/delete_bookmark/{{bookmark.id}}">Delete</a>
+                    <a class ="distant" href="/update_bookmark/{{bookmark.id}}">Update</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+    <form action="/bookmarks_view" method="POST">
+        <input type = "text" name="content" id="content" placeholder="enter a bookmark" style="outline:color;" required>
+        <input type = "text" name="comment" id="comment" placeholder="enter a comment" style="outline:color;" required>
+        <input type = "submit" value = "Add Bookmark">
+    </form>
+    <p>Server Time: {{ date_now() }}</p>
+</div>
+{% endblock %}
