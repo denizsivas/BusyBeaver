@@ -5,6 +5,7 @@ from datetime import datetime, timezone, timedelta
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todos.db'
+app.config['SQLALCHEMY_BINDS'] = {'bookmark': 'sqlite:///bookmarks.db', 'reminder': 'sqlite:///reminders.db'}
 db = SQLAlchemy(app)
 
 
@@ -18,6 +19,28 @@ class Todo(db.Model):
         return '<Task %r>' % self.id
 
 
+class Bookmarks(db.Model):
+    __bind_key__ = 'bookmark'
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.String(200), nullable=False)
+    date_created = db.Column(db.DateTime, default=datetime.now())
+    comment = db.Column(db.String(200), nullable=False)
+
+    def __repr__(self):
+        return '<Bookmark %r>' % self.id
+
+
+class Reminders(db.Model):
+    __bind_key__ = 'reminder'
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.String(200), nullable=False)
+    date_created = db.Column(db.DateTime, default=datetime.now())
+    date_target = db.Column(db.DateTime)
+
+    def __repr__(self):
+        return '<Reminder %r>' % self.id
+
+
 @app.route('/', methods=['POST', 'GET'])
 def index():
     if request.method == 'POST':
@@ -28,7 +51,7 @@ def index():
             db.session.commit()
             return redirect('/')
         except:
-            return 'There was an issue adding your task'
+            return 'There was an issue adding your task.'
     else:
         tasks = Todo.query.filter_by(completed=0).all()
         return render_template('index.html', tasks=tasks)
@@ -45,6 +68,17 @@ def delete(id):
         return 'There was a problem deleting that task.'
 
 
+@app.route('/delete_bookmark/<int:id>')
+def delete_bookmark(id):
+    bookmark_to_delete = Bookmarks.query.get_or_404(id)
+    try:
+        db.session.delete(bookmark_to_delete)
+        db.session.commit()
+        return redirect('/bookmarks_view')
+    except:
+        return 'There was a problem deleting that bookmark.'
+
+
 @app.route('/update/<int:id>',methods=['GET', 'POST'])
 def update(id):
     task = Todo.query.get_or_404(id)
@@ -57,6 +91,21 @@ def update(id):
             return 'There was an issue updating your task.'
     else:
         return render_template('update.html', task=task)
+
+
+@app.route('/update_bookmark/<int:id>', methods=['GET', 'POST'])
+def update_bookmark(id):
+    bookmark = Bookmarks.query.get_or_404(id)
+    if request.method == 'POST':
+        bookmark.content = request.form['content']
+        bookmark.comment = request.form['comment']
+        try:
+            db.session.commit()
+            return redirect('/bookmarks_view')
+        except:
+            return 'There was an issue updating your bookmark.'
+    else:
+        return render_template('bookmarks_update.html', bookmark=bookmark)
 
 
 @app.route('/done/<int:id>')
@@ -94,9 +143,21 @@ def reminders_view():
     return render_template('under_construction.html')
 
 
-@app.route('/bookmarks_view')
+@app.route('/bookmarks_view', methods=['POST', 'GET'])
 def bookmarks_view():
-    return render_template('under_construction.html')
+    if request.method == 'POST':
+        bookmark_content = request.form['content']
+        bookmark_comment = request.form['comment']
+        new_bookmark = Bookmarks(content=bookmark_content, comment=bookmark_comment, date_created=datetime.now())
+        try:
+            db.session.add(new_bookmark)
+            db.session.commit()
+            return redirect('/bookmarks_view')
+        except:
+            return 'There was an issue adding your bookmark'
+    else:
+        bookmarks = Bookmarks.query.order_by(Bookmarks.date_created).all()
+        return render_template('bookmarks.html', bookmarks=bookmarks)
 
 
 @app.route('/notes_view')
