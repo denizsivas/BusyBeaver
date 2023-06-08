@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone, timedelta, date
 
 
 app = Flask(__name__)
@@ -35,7 +35,9 @@ class Reminders(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(200), nullable=False)
     date_created = db.Column(db.DateTime, default=datetime.now())
-    date_target = db.Column(db.DateTime)
+    cycle = db.Column(db.String)
+    type = db.Column(db.String)
+    date_target = db.Column(db.String)
 
     def __repr__(self):
         return '<Reminder %r>' % self.id
@@ -138,9 +140,51 @@ def done_view():
     return render_template('done_view.html', tasks=tasks)
 
 
-@app.route('/reminders_view')
+@app.route('/reminders_view', methods=['POST', 'GET'])
 def reminders_view():
-    return render_template('under_construction.html')
+    if request.method == 'POST':
+        reminder_content = request.form['content']
+        reminder_type = request.form['type']
+        reminder_cycle = request.form['cycle']
+        reminder_target_date = request.form['target_date']
+        new_reminder = Reminders(content=reminder_content, type=reminder_type, date_created=datetime.now(), cycle=reminder_cycle, date_target=reminder_target_date)
+        try:
+            db.session.add(new_reminder)
+            db.session.commit()
+        except:
+            return 'There was an issue adding your reminder.'
+        return redirect('/reminders_view')
+    else:
+        reminders = Reminders.query.order_by(Reminders.date_created).all()
+        return render_template('reminders.html', reminders=reminders)
+
+
+@app.route('/update_reminder/<int:id>', methods=['GET', 'POST'])
+def update_reminder(id):
+    reminder = Reminders.query.get_or_404(id)
+    if request.method == 'POST':
+        reminder.content = request.form['content']
+        reminder.type = request.form['type']
+        reminder.cycle = request.form['cycle']
+        reminder.target_date = request.form['target_date']
+        try:
+            db.session.commit()
+            return redirect('/reminders_view')
+        except:
+            return 'There was an issue updating your reminder.'
+    else:
+        return render_template('reminders_update.html', reminder=reminder)
+
+
+@app.route('/delete_reminder/<int:id>')
+def delete_reminder(id):
+    reminder_to_delete = Reminders.query.get_or_404(id)
+    try:
+        db.session.delete(reminder_to_delete)
+        db.session.commit()
+        return redirect('/reminders_view')
+    except:
+        return 'There was a problem deleting that reminder.'
 
 
 @app.route('/bookmarks_view', methods=['POST', 'GET'])
@@ -184,7 +228,13 @@ def my_utility_processor():
     def date_now():
         return datetime.now()
 
-    return dict(date_now=date_now, elapsed_time=elapsed_time)
+    def time_remaining(target_date):
+        target = date.fromisoformat(target_date)
+        now = datetime.now().date()
+        remaining_days = abs((target - now).days)
+        return remaining_days
+
+    return dict(date_now=date_now, elapsed_time=elapsed_time, time_remaining=time_remaining)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block body %}
+<div class="content">
+    {% if reminders|length < 1 %}
+    <h1>Busy Beaver</h1>
+    <h4>There are no reminders yet. :(</h4>
+    {% else %}
+    {% include 'header_section.html' %}
+    <table>
+        <tr>
+            <th>Reminder</th>
+            <th>Date Added</th>
+            <th>Type</th>
+            <th>Cycle</th>
+            <th>Target Date</th>
+            <th>Time Remaining [days]</th>
+            <th>Actions</th>
+        </tr>
+        {% for reminder in reminders %}
+            <tr>
+                <td>{{ reminder.content }}</td>
+                <td>{{ reminder.date_created.date() }}</td>
+                <td>{{ reminder.type }}</td>
+                <td>{{ reminder.cycle }}</td>
+                <td>{{ reminder.date_target }}</td>
+                <td>{{ time_remaining(reminder.date_target) }}</td>
+                <td>
+                    <a class ="distant" href="/delete_reminder/{{reminder.id}}">Delete</a>
+                    <a class ="distant" href="/update_reminder/{{reminder.id}}">Update</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+    <form action="/reminders_view" method="POST">
+        <input type = "text" name="content" id="content" placeholder="enter a reminder" style="outline:color;" required>
+        <select name="type" id="type">
+            <option value="task">Task</option>
+            <option value="payment">Payment</option>
+            <option value="bill">Bill</option>
+        </select>
+        <select name="cycle" id="cycle">
+            <option value="once">Once</option>
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="yearly">Yearly</option>
+        </select>
+        <label for="target_date">Target Date:</label>
+        <input type="date" id="target_date" name="target_date">
+        <input type = "submit" value = "Add Reminder">
+    </form>
+    <p>Server Time: {{ date_now() }}</p>
+</div>
+{% endblock %}

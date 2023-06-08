@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block body %}
+<div class="content">
+    <h1>Update Reminder</h1>
+    <form action="/update_reminder/{{reminder.id}}" method="POST">
+        <input type = "text" name="content" id="content" style="outline:color;" value="{{reminder.content}}">
+        <select name="type" id="type">
+            <option value="task">Task</option>
+            <option value="payment">Payment</option>
+            <option value="bill">Bill</option>
+        </select>
+        <select name="cycle" id="cycle">
+            <option value="once">Once</option>
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="yearly">Yearly</option>
+        </select>
+        <label for="target_date">Target Date:</label>
+        <input type="date" id="target_date" name="target_date">
+        <input type = "submit" value = "Add Reminder">
+    </form>
+</div>
+{% endblock %}
