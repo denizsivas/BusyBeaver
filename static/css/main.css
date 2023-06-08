@@ -93,3 +93,17 @@ box-shadow: 0 0 10px #00FF00;
 #header ul li a:hover {
     text-decoration:underline;
 }
+
+select {
+    color: #00FF00;
+    background: black;
+    font-family: monospace;
+    font-size: 15px;
+    border-color: #00FF00;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  border-radius: 4px;
+  filter: invert(52%) sepia(52%) saturate(3940%) hue-rotate(87deg) brightness(129%) contrast(116%);
+}
