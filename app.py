@@ -231,7 +231,7 @@ def my_utility_processor():
     def time_remaining(target_date):
         target = date.fromisoformat(target_date)
         now = datetime.now().date()
-        remaining_days = abs((target - now).days)
+        remaining_days = (target - now).days
         return remaining_days
 
     return dict(date_now=date_now, elapsed_time=elapsed_time, time_remaining=time_remaining)
