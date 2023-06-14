@@ -22,6 +22,20 @@
             <th>Actions</th>
         </tr>
         {% for reminder in reminders %}
+            {% if time_remaining(reminder.date_target) < 0 %}
+            <tr class = "overtime" >
+                <td>{{ reminder.content }}</td>
+                <td>{{ reminder.date_created.date() }}</td>
+                <td>{{ reminder.type }}</td>
+                <td>{{ reminder.cycle }}</td>
+                <td>{{ reminder.date_target }}</td>
+                <td>{{ time_remaining(reminder.date_target) }}</td>
+                <td>
+                    <a class ="distant-overtime" href="/delete_reminder/{{reminder.id}}">Delete</a>
+                    <a class ="distant-overtime" href="/update_reminder/{{reminder.id}}">Update</a>
+                </td>
+            </tr>
+            {% else %}
             <tr>
                 <td>{{ reminder.content }}</td>
                 <td>{{ reminder.date_created.date() }}</td>
@@ -34,6 +48,7 @@
                     <a class ="distant" href="/update_reminder/{{reminder.id}}">Update</a>
                 </td>
             </tr>
+            {% endif %}
         {% endfor %}
     </table>
     {% endif %}

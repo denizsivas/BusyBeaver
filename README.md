@@ -20,6 +20,7 @@ from app import app, db
 app.app_context().push() 
 db.create_all() 
 ```
-2. Upload your files to a server either cloud or your 7/24 host computer
+2. Upload your files to a server
 3. app.py is your main app so make sure it runs first with your setup
+4. Have fun using your assistant
 
