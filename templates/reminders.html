@@ -33,6 +33,7 @@
                 <td>
                     <a class ="distant-overtime" href="/delete_reminder/{{reminder.id}}">Delete</a>
                     <a class ="distant-overtime" href="/update_reminder/{{reminder.id}}">Update</a>
+                    <a class ='distant-overtime' href="/next_reminder/{{reminder.id}}">Remind Next</a>
                 </td>
             </tr>
             {% else %}
@@ -46,6 +47,7 @@
                 <td>
                     <a class ="distant" href="/delete_reminder/{{reminder.id}}">Delete</a>
                     <a class ="distant" href="/update_reminder/{{reminder.id}}">Update</a>
+                    <a class ='distant' href="/next_reminder/{{reminder.id}}">Remind Next</a>
                 </td>
             </tr>
             {% endif %}

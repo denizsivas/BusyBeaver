@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timezone, timedelta, date
+from dateutil.relativedelta import relativedelta
 
 
 app = Flask(__name__)
@@ -174,6 +175,31 @@ def update_reminder(id):
             return 'There was an issue updating your reminder.'
     else:
         return render_template('reminders_update.html', reminder=reminder)
+
+
+@app.route('/next_reminder/<int:id>')
+def next_reminder(id):
+    reminder = Reminders.query.get_or_404(id)
+    target_date_to_iterate = date.fromisoformat(reminder.date_target)
+    if reminder.cycle == 'once':
+        return 'This task is not recurrent. Update the type first.'
+    elif reminder.cycle == 'daily':
+        delta = timedelta(days=1)
+        reminder.date_target = target_date_to_iterate + delta
+    elif reminder.cycle == 'weekly':
+        delta = timedelta(weeks=1)
+        reminder.date_target = target_date_to_iterate + delta
+    elif reminder.cycle == 'monthly':
+        delta = relativedelta(months=1)
+        reminder.date_target = target_date_to_iterate + delta
+    elif reminder.cycle == 'yearly':
+        delta = relativedelta(years=1)
+        reminder.date_target = target_date_to_iterate + delta
+    try:
+        db.session.commit()
+        return redirect('/reminders_view')
+    except:
+        return 'There was an issue iterating your reminder.'
 
 
 @app.route('/delete_reminder/<int:id>')
