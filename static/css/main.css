@@ -19,6 +19,7 @@ table, td, th {
 
 table {
     border-collapse: collapse;
+    margin-top: 20px;
 }
 
 td {
@@ -119,4 +120,13 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
   border-radius: 4px;
   filter: invert(52%) sepia(52%) saturate(3940%) hue-rotate(87deg) brightness(129%) contrast(116%);
+}
+
+hr {
+    width:30%;
+    text-align:left;
+    margin-left:0;
+    border-color: #00FF00;
+    background-color: #00FF00;
+    color: #00FF00
 }
