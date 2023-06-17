@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block head %}
+{% endblock %}
+
+
+{% block body %}
+<div class="content">
+    {% include 'header_section.html' %}
+    <table>
+        <tr>
+            <th>Task Count</th>
+            <th>Reminder Count</th>
+            <th>Bookmark Count</th>
+        </tr>
+        <tr>
+                <td>{{ tasks_count }}</td>
+                <td>{{ reminders_count }}</td>
+                <td>{{ bookmarks_count }}  </td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <th>Task Completion Rate</th>
+        </tr>
+        <tr>
+            <td>{{ task_completion }}</td>
+        </tr>
+    </table>
+    {%if close_reminders|length >= 1 %}
+    <table>
+        <tr>
+            <th>Close Reminders</th>
+            <th>Type</th>
+            <th>Cycle</th>
+            <th>Target Date</th>
+            <th>Time Remaining</th>
+        </tr>
+            {% for reminder in close_reminders %}
+                <tr>
+                    <td>{{ reminder.content }}</td>
+                    <td>{{ reminder.type }}</td>
+                    <td>{{ reminder.cycle }}</td>
+                    <td>{{ reminder.date_target }}</td>
+                    <td>{{ time_remaining(reminder.date_target) }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+    <p> No upcoming reminders!</p>
+    {% endif %}
+
+    {% include 'footer_section.html' %}
+</div>
+{% endblock %}

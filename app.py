@@ -237,7 +237,21 @@ def notes_view():
 
 @app.route('/stats_view')
 def stats_view():
-    return render_template('under_construction.html')
+    tasks_count = Todo.query.filter_by(completed=0).count()
+    tasks_completed = Todo.query.filter_by(completed=1).count()
+    task_completion = '% ' + str(round((tasks_completed / (tasks_count + tasks_completed))*100, 2))
+    reminders_count = Reminders.query.order_by(Reminders.date_created).count()
+    bookmarks_count = Bookmarks.query.order_by(Bookmarks.date_created).count()
+    reminders_all = Reminders.query.all()
+    close_reminders = []
+    for reminder in reminders_all:
+        target = date.fromisoformat(reminder.date_target)
+        now = datetime.now().date()
+        remaining_days = (target - now).days
+        if remaining_days <= 2:
+            close_reminders.append(reminder)
+
+    return render_template('stats.html', tasks_count=tasks_count, reminders_count=reminders_count, bookmarks_count=bookmarks_count, task_completion=task_completion, close_reminders=close_reminders)
 
 
 @app.context_processor
@@ -254,13 +268,16 @@ def my_utility_processor():
     def date_now():
         return datetime.now()
 
+    def cw_now():
+        return datetime.utcnow().isocalendar()[1]
+
     def time_remaining(target_date):
         target = date.fromisoformat(target_date)
         now = datetime.now().date()
         remaining_days = (target - now).days
         return remaining_days
 
-    return dict(date_now=date_now, elapsed_time=elapsed_time, time_remaining=time_remaining)
+    return dict(date_now=date_now, elapsed_time=elapsed_time, time_remaining=time_remaining, cw_now=cw_now)
 
 
 if __name__ == "__main__":
