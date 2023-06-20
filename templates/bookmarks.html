@@ -1,14 +1,12 @@
 {% extends 'base.html' %}
-
 {% block head %}
 {% endblock %}
-
-
 {% block body %}
+{% include 'header_section.html' %}
 <div class="content">
     {% if bookmarks|length < 1 %}
-    <h1>Busy Beaver</h1>
-    <h4>There are no bookmarks yet. :(</h4>
+
+    <h4>There are no bookmarks yet. ¯\_(ツ)_/¯ </h4>
     {% else %}
     {% include 'header_section.html' %}
     <table>

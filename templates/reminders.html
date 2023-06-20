@@ -2,13 +2,11 @@
 
 {% block head %}
 {% endblock %}
-
-
 {% block body %}
+{% include 'header_section.html' %}
 <div class="content">
     {% if reminders|length < 1 %}
-    <h1>Busy Beaver</h1>
-    <h4>There are no reminders yet. :(</h4>
+    <h4>There are no reminders yet. ¯\_(ツ)_/¯ </h4>
     {% else %}
     {% include 'header_section.html' %}
     <table>
@@ -22,7 +20,7 @@
             <th>Actions</th>
         </tr>
         {% for reminder in reminders %}
-            {% if time_remaining(reminder.date_target) < 0 %}
+            {% if time_remaining(reminder.date_target) <= 0 %}
             <tr class = "overtime" >
                 <td>{{ reminder.content }}</td>
                 <td>{{ reminder.date_created.date() }}</td>
@@ -55,7 +53,7 @@
     </table>
     {% endif %}
     <form action="/reminders_view" method="POST">
-        <input type = "text" name="content" id="content" placeholder="enter a reminder" style="outline:color;" required>
+        <input type = "text" name="content" id="reminder_input_content" placeholder="enter a reminder" style="outline:color;" required>
         <select name="type" id="type">
             <option value="task">Task</option>
             <option value="payment">Payment</option>
