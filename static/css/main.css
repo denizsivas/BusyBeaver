@@ -45,8 +45,12 @@ form {
     font-color: #00FF00;
 }
 
-.task_input{
+#input_content {
+    width: 25%
+}
 
+#reminder_input_content {
+    width: 20%
 }
 
 .distant {
@@ -83,13 +87,24 @@ box-shadow: 0 0 10px #00FF00;
 }
 
 #header {
-    width:100%;
-    padding:15px;
+    padding: 5px;
+    width: 90%;
+    margin-left: 5%
 }
 
 #header h1 {
     display:inline;
 }
+
+#header h1 a{
+    color: #00FF00;
+    text-decoration:none
+}
+
+#header h1 a:hover {
+    text-decoration:underline;
+}
+
 
 #header ul {
    display:inline;

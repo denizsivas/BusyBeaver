@@ -1,16 +1,12 @@
 {% extends 'base.html' %}
-
 {% block head %}
 {% endblock %}
-
-
 {% block body %}
+{% include 'header_section.html' %}
 <div class="content">
     {% if tasks|length < 1 %}
-    <h1>Busy Beaver</h1>
-    <h4>There are no done tasks :(</h4>
+    <h4>There are no done tasks. ¯\_(ツ)_/¯ </h4>
     {% else %}
-    {% include 'header_section.html' %}
     <table>
         <tr>
             <th>Task</th>

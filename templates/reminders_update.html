@@ -8,22 +8,70 @@
 <div class="content">
     <h1>Update Reminder</h1>
     <form action="/update_reminder/{{reminder.id}}" method="POST">
-        <input type = "text" name="content" id="content" style="outline:color;" value="{{reminder.content}}">
+        <input type = "text" name="content" id="reminder_input_content" style="outline:color;" value="{{reminder.content}}">
+        {% if reminder.type == 'task' %}
         <select name="type" id="type">
-            <option value="task">Task</option>
+            <option value="task" selected>Task</option>
             <option value="payment">Payment</option>
             <option value="bill">Bill</option>
         </select>
+        {% elif reminder.type == 'payment' %}
+        <select name="type" id="type">
+            <option value="task" >Task</option>
+            <option value="payment" selected>Payment</option>
+            <option value="bill">Bill</option>
+        </select>
+        {% elif reminder.type == 'bill' %}
+        <select name="type" id="type">
+            <option value="task">Task</option>
+            <option value="payment">Payment</option>
+            <option value="bill" selected>Bill</option>
+        </select>
+        {% endif %}
+        {% if reminder.cycle == 'once' %}
         <select name="cycle" id="cycle">
-            <option value="once">Once</option>
+            <option value="once" selected>Once</option>
             <option value="daily">Daily</option>
             <option value="weekly">Weekly</option>
             <option value="monthly">Monthly</option>
             <option value="yearly">Yearly</option>
         </select>
+        {% elif reminder.cycle == 'daily' %}
+        <select name="cycle" id="cycle">
+            <option value="once">Once</option>
+            <option value="daily" selected>Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="yearly">Yearly</option>
+        </select>
+        {% elif reminder.cycle == 'weekly' %}
+        <select name="cycle" id="cycle">
+            <option value="once">Once</option>
+            <option value="daily">Daily</option>
+            <option value="weekly" selected>Weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="yearly">Yearly</option>
+        </select>
+        {% elif reminder.cycle == 'monthly' %}
+        <select name="cycle" id="cycle">
+            <option value="once">Once</option>
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly" selected>Monthly</option>
+            <option value="yearly">Yearly</option>
+        </select>
+        {% elif reminder.cycle == 'yearly' %}
+        <select name="cycle" id="cycle">
+            <option value="once">Once</option>
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="yearly" selected>Yearly</option>
+        </select>
+        {% endif %}
         <label for="target_date">Target Date:</label>
-        <input type="date" id="target_date" name="target_date">
-        <input type = "submit" value = "Add Reminder">
+        <input type="date" id="target_date" name="target_date" value="{{ reminder.date_target }}">
+        <input type = "submit" value = "Update Reminder">
     </form>
 </div>
 {% endblock %}

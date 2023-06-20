@@ -1,16 +1,12 @@
 {% extends 'base.html' %}
-
 {% block head %}
 {% endblock %}
-
-
 {% block body %}
+{% include 'header_section.html' %}
 <div class="content">
     {% if tasks|length < 1 %}
-    <h1>Busy Beaver</h1>
-    <h4>There are no tasks. Good job!</h4>
+    <h4>There are no tasks. ¯\_(ツ)_/¯ Good job!</h4>
     {% else %}
-    {% include 'header_section.html' %}
     <table>
         <tr>
             <th>Task</th>
@@ -33,7 +29,7 @@
     </table>
     {% endif %}
     <form action="/" method="POST">
-        <input type = "text" name="content" id="content" placeholder="enter a todo" style="outline:color;" required>
+        <input type = "text" name="content" id="input_content" placeholder="enter a todo" style="outline:color;" required>
         <input type = "submit" value = "Add Task">
     </form>
     {% include 'footer_section.html' %}
