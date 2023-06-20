@@ -2,9 +2,8 @@
 
 {% block head %}
 {% endblock %}
-
-{% include 'header_section.html' %}
 {% block body %}
+{% include 'header_section.html' %}
 <div class="content">
     <h1>Update Reminder</h1>
     <form action="/update_reminder/{{reminder.id}}" method="POST">
