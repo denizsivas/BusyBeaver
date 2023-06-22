@@ -145,3 +145,10 @@ hr {
     background-color: #00FF00;
     color: #00FF00
 }
+
+.center {
+  margin: auto;
+  width: 50%;
+  padding: 10px;
+  width: min-content
+}
