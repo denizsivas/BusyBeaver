@@ -54,7 +54,8 @@ def index():
             db.session.commit()
             return redirect('/')
         except:
-            return 'There was an issue adding your task.'
+            error_message = 'There was an issue adding your task.'
+            return render_template('not_found.html', error_message=error_message)
     else:
         tasks = Todo.query.filter_by(completed=0).all()
         return render_template('index.html', tasks=tasks)
@@ -68,7 +69,8 @@ def delete(id):
         db.session.commit()
         return redirect('/')
     except:
-        return 'There was a problem deleting that task.'
+        error_message = 'There was a problem deleting that task.'
+        return render_template('not_found.html', error_message=error_message)
 
 
 @app.route('/delete_bookmark/<int:id>')
@@ -79,7 +81,8 @@ def delete_bookmark(id):
         db.session.commit()
         return redirect('/bookmarks_view')
     except:
-        return 'There was a problem deleting that bookmark.'
+        error_message = 'There was a problem deleting that bookmark.'
+        return render_template('not_found.html', error_message=error_message)
 
 
 @app.route('/update/<int:id>',methods=['GET', 'POST'])
@@ -91,7 +94,8 @@ def update(id):
             db.session.commit()
             return redirect('/')
         except:
-            return 'There was an issue updating your task.'
+            error_message = 'There was an issue updating your task.'
+            return render_template('not_found.html', error_message=error_message)
     else:
         return render_template('update.html', task=task)
 
@@ -106,7 +110,8 @@ def update_bookmark(id):
             db.session.commit()
             return redirect('/bookmarks_view')
         except:
-            return 'There was an issue updating your bookmark.'
+            error_message = 'There was an issue updating your bookmark.'
+            return render_template('not_found.html', error_message=error_message)
     else:
         return render_template('bookmarks_update.html', bookmark=bookmark)
 
@@ -120,7 +125,8 @@ def done(id):
         db.session.commit()
         return redirect('/')
     except:
-        return 'There was a problem during status change of that task.'
+        error_message = 'There was a problem during status change of that task.'
+        return render_template('not_found.html', error_message=error_message)
 
 
 @app.route('/undone/<int:id>')
@@ -132,7 +138,9 @@ def undone(id):
         db.session.commit()
         return redirect('/done_view')
     except:
-        return 'There was a problem during status change of that task.'
+        error_message = 'There was a problem during status change of that task.'
+        return render_template('not_found.html', error_message=error_message)
+
 
 
 @app.route('/done_view')
@@ -153,7 +161,8 @@ def reminders_view():
             db.session.add(new_reminder)
             db.session.commit()
         except:
-            return 'There was an issue adding your reminder.'
+            error_message = 'There was a problem adding your reminder.'
+            return render_template('not_found.html', error_message=error_message)
         return redirect('/reminders_view')
     else:
         reminders = Reminders.query.order_by(Reminders.date_created).all()
@@ -167,12 +176,13 @@ def update_reminder(id):
         reminder.content = request.form['content']
         reminder.type = request.form['type']
         reminder.cycle = request.form['cycle']
-        reminder.target_date = request.form['target_date']
+        reminder.date_target = request.form['target_date']
         try:
             db.session.commit()
             return redirect('/reminders_view')
         except:
-            return 'There was an issue updating your reminder.'
+            error_message = 'There was an issue updating your reminder.'
+            return render_template('not_found.html', error_message=error_message)
     else:
         return render_template('reminders_update.html', reminder=reminder)
 
@@ -182,7 +192,8 @@ def next_reminder(id):
     reminder = Reminders.query.get_or_404(id)
     target_date_to_iterate = date.fromisoformat(reminder.date_target)
     if reminder.cycle == 'once':
-        return 'This task is not recurrent. Update the type first.'
+        error_message = 'This task is not recurrent. Update the type first.'
+        return render_template('not_found.html', error_message=error_message)
     elif reminder.cycle == 'daily':
         delta = timedelta(days=1)
         reminder.date_target = target_date_to_iterate + delta
@@ -199,7 +210,8 @@ def next_reminder(id):
         db.session.commit()
         return redirect('/reminders_view')
     except:
-        return 'There was an issue iterating your reminder.'
+        error_message = 'There was an issue iterating your reminder.'
+        return render_template('not_found.html', error_message=error_message)
 
 
 @app.route('/delete_reminder/<int:id>')
@@ -210,7 +222,8 @@ def delete_reminder(id):
         db.session.commit()
         return redirect('/reminders_view')
     except:
-        return 'There was a problem deleting that reminder.'
+        error_message = 'There was a problem deleting that reminder.'
+        return render_template('not_found.html', error_message=error_message)
 
 
 @app.route('/bookmarks_view', methods=['POST', 'GET'])
@@ -224,7 +237,8 @@ def bookmarks_view():
             db.session.commit()
             return redirect('/bookmarks_view')
         except:
-            return 'There was an issue adding your bookmark'
+            error_message = 'There was an issue adding your bookmark'
+            return render_template('not_found.html', error_message=error_message)
     else:
         bookmarks = Bookmarks.query.order_by(Bookmarks.date_created).all()
         return render_template('bookmarks.html', bookmarks=bookmarks)

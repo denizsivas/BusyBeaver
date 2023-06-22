@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block head %}
+{% endblock %}
+{% block body %}
+{% include 'header_section.html' %}
+<div class="center">
+<img src= "/static/img/404.png" width="400" height="400">
+</div>
+<div class="content">
+    <p> An error occured.</p>
+    <p> Reason: {{ error_message }}</p>
+</div>
+{% endblock %}
