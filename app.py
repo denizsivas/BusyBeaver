@@ -166,6 +166,16 @@ def reminders_view():
         return redirect('/reminders_view')
     else:
         reminders = Reminders.query.order_by(Reminders.date_created).all()
+        # sort the reminders based on their deadline
+        reminders_ext = []
+        for reminder in reminders:
+            target = date.fromisoformat(reminder.date_target)
+            now = datetime.now().date()
+            remaining_days = (target - now).days
+            combo = (reminder, remaining_days)
+            reminders_ext.append(combo)
+        reminders_ext.sort(key=lambda a: a[1], reverse=False)
+        reminders = list(zip(*reminders_ext))[0]
         return render_template('reminders.html', reminders=reminders)
 
 
