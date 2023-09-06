@@ -152,3 +152,11 @@ hr {
   padding: 10px;
   width: min-content
 }
+
+.messagebar {
+    padding: 5px;
+    width: 50%;
+    margin-left: 5%;
+    color: black;
+    background-color: #00FF00;
+}

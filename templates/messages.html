@@ -1,0 +1,5 @@
+ <div id="messages">
+   {% for message in get_flashed_messages() %}
+      <p class="messagebar"> {{ message }} </p>
+   {% endfor %}
+ </div>
