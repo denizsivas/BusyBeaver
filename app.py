@@ -1,10 +1,10 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timezone, timedelta, date
 from dateutil.relativedelta import relativedelta
 
-
 app = Flask(__name__)
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todos.db'
 app.config['SQLALCHEMY_BINDS'] = {'bookmark': 'sqlite:///bookmarks.db', 'reminder': 'sqlite:///reminders.db'}
 db = SQLAlchemy(app)
@@ -47,15 +47,19 @@ class Reminders(db.Model):
 @app.route('/', methods=['POST', 'GET'])
 def index():
     if request.method == 'POST':
-        task_content = request.form['content']
-        new_task = Todo(content=task_content, date_created=datetime.now())
-        try:
-            db.session.add(new_task)
-            db.session.commit()
-            return redirect('/')
-        except:
-            error_message = 'There was an issue adding your task.'
+        if request.form['content'] == '':
+            error_message = 'One of the fields is missing.'
             return render_template('not_found.html', error_message=error_message)
+        else:
+            task_content = request.form['content']
+            new_task = Todo(content=task_content, date_created=datetime.now())
+            try:
+                db.session.add(new_task)
+                db.session.commit()
+                return redirect('/')
+            except:
+                error_message = 'There was an issue adding your task.'
+                return render_template('not_found.html', error_message=error_message)
     else:
         tasks = Todo.query.filter_by(completed=0).all()
         return render_template('index.html', tasks=tasks)
@@ -85,7 +89,7 @@ def delete_bookmark(id):
         return render_template('not_found.html', error_message=error_message)
 
 
-@app.route('/update/<int:id>',methods=['GET', 'POST'])
+@app.route('/update/<int:id>', methods=['GET', 'POST'])
 def update(id):
     task = Todo.query.get_or_404(id)
     if request.method == 'POST':
@@ -142,7 +146,6 @@ def undone(id):
         return render_template('not_found.html', error_message=error_message)
 
 
-
 @app.route('/done_view')
 def done_view():
     tasks = Todo.query.filter_by(completed=1).all()
@@ -152,18 +155,25 @@ def done_view():
 @app.route('/reminders_view', methods=['POST', 'GET'])
 def reminders_view():
     if request.method == 'POST':
-        reminder_content = request.form['content']
-        reminder_type = request.form['type']
-        reminder_cycle = request.form['cycle']
-        reminder_target_date = request.form['target_date']
-        new_reminder = Reminders(content=reminder_content, type=reminder_type, date_created=datetime.now(), cycle=reminder_cycle, date_target=reminder_target_date)
-        try:
-            db.session.add(new_reminder)
-            db.session.commit()
-        except:
-            error_message = 'There was a problem adding your reminder.'
-            return render_template('not_found.html', error_message=error_message)
-        return redirect('/reminders_view')
+        if request.form['content'] == '' or request.form['type'] == '' or request.form['cycle'] == '' or \
+                request.form['target_date'] == '':
+            error_message = 'One of the fields is missing.'
+            flash(error_message, 'error')
+            return redirect('/reminders_view')
+        else:
+            reminder_content = request.form['content']
+            reminder_type = request.form['type']
+            reminder_cycle = request.form['cycle']
+            reminder_target_date = request.form['target_date']
+            new_reminder = Reminders(content=reminder_content, type=reminder_type, date_created=datetime.now(),
+                                     cycle=reminder_cycle, date_target=reminder_target_date)
+            try:
+                db.session.add(new_reminder)
+                db.session.commit()
+            except:
+                error_message = 'There was a problem adding your reminder.'
+                return render_template('not_found.html', error_message=error_message)
+            return redirect('/reminders_view')
     else:
         reminders = Reminders.query.order_by(Reminders.date_created).all()
         # sort the reminders based on their deadline
@@ -183,16 +193,22 @@ def reminders_view():
 def update_reminder(id):
     reminder = Reminders.query.get_or_404(id)
     if request.method == 'POST':
-        reminder.content = request.form['content']
-        reminder.type = request.form['type']
-        reminder.cycle = request.form['cycle']
-        reminder.date_target = request.form['target_date']
-        try:
-            db.session.commit()
+        if request.form['content'] == '' or request.form['type'] == '' or request.form['cycle'] == '' or \
+                request.form['target_date'] == '':
+            error_message = 'One of the fields is missing.'
+            flash(error_message, 'error')
             return redirect('/reminders_view')
-        except:
-            error_message = 'There was an issue updating your reminder.'
-            return render_template('not_found.html', error_message=error_message)
+        else:
+            reminder.content = request.form['content']
+            reminder.type = request.form['type']
+            reminder.cycle = request.form['cycle']
+            reminder.date_target = request.form['target_date']
+            try:
+                db.session.commit()
+                return redirect('/reminders_view')
+            except:
+                error_message = 'There was an issue updating your reminder.'
+                return render_template('not_found.html', error_message=error_message)
     else:
         return render_template('reminders_update.html', reminder=reminder)
 
@@ -263,7 +279,7 @@ def notes_view():
 def stats_view():
     tasks_count = Todo.query.filter_by(completed=0).count()
     tasks_completed = Todo.query.filter_by(completed=1).count()
-    task_completion = '% ' + str(round((tasks_completed / (tasks_count + tasks_completed))*100, 2))
+    task_completion = '% ' + str(round((tasks_completed / (tasks_count + tasks_completed)) * 100, 2))
     reminders_count = Reminders.query.order_by(Reminders.date_created).count()
     bookmarks_count = Bookmarks.query.order_by(Bookmarks.date_created).count()
     reminders_all = Reminders.query.all()
@@ -275,12 +291,13 @@ def stats_view():
         if remaining_days <= 2:
             close_reminders.append(reminder)
 
-    return render_template('stats.html', tasks_count=tasks_count, reminders_count=reminders_count, bookmarks_count=bookmarks_count, task_completion=task_completion, close_reminders=close_reminders)
+    return render_template('stats.html', tasks_count=tasks_count, reminders_count=reminders_count,
+                           bookmarks_count=bookmarks_count, task_completion=task_completion,
+                           close_reminders=close_reminders)
 
 
 @app.context_processor
 def my_utility_processor():
-
     def elapsed_time(then, now=datetime.now(), interval="default"):
         duration = now - then
         duration_in_s = duration.total_seconds()
