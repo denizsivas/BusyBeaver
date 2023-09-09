@@ -17,7 +17,11 @@
         </tr>
         {% for bookmark in bookmarks %}
             <tr>
+            {% if bookmark.content|length >=50 %}
                 <td>{{ bookmark.content[0:50] + "..." }}</td>
+            {% else %}
+                <td>{{ bookmark.content }}</td>
+            {% endif %}
                 <td>
                     <a class="bi bi-box-arrow-up-right" href="{{bookmark.content}}">Go</a>
                 </td>
