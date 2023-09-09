@@ -10,13 +10,17 @@
     <table>
         <tr>
             <th>Bookmark</th>
+            <th>Link</th>
             <th>Date Added</th>
             <th>Comment</th>
             <th>Actions</th>
         </tr>
         {% for bookmark in bookmarks %}
             <tr>
-                <td>{{ bookmark.content }}</td>
+                <td>{{ bookmark.content[0:30] + "..." }}</td>
+                <td>
+                    <a class="bi bi-box-arrow-up-right" href="{{bookmark.content}}">Go</a>
+                </td>
                 <td>{{ bookmark.date_created.date() }}</td>
                 <td>{{ bookmark.comment }}</td>
                 <td>
