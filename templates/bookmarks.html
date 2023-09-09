@@ -17,7 +17,7 @@
         </tr>
         {% for bookmark in bookmarks %}
             <tr>
-                <td>{{ bookmark.content[0:50] + "..." }}</td>
+                <td>{{ bookmark.content[0:30] + "..." }}</td>
                 <td>
                     <a class="bi bi-box-arrow-up-right" href="{{bookmark.content}}">Go</a>
                 </td>
