@@ -146,12 +146,6 @@ def undone(id):
         return render_template('not_found.html', error_message=error_message)
 
 
-@app.route('/done_view')
-def done_view():
-    tasks = Todo.query.filter_by(completed=1).all()
-    return render_template('done_view.html', tasks=tasks)
-
-
 @app.route('/reminders_view', methods=['POST', 'GET'])
 def reminders_view():
     if request.method == 'POST':
@@ -274,6 +268,10 @@ def bookmarks_view():
 def notes_view():
     return render_template('under_construction.html')
 
+
+@app.route('/purchasing_view')
+def purchasing_view():
+    return render_template('under_construction.html')
 
 @app.route('/stats_view')
 def stats_view():
