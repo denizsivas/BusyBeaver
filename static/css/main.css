@@ -56,14 +56,12 @@ form {
 .distant {
     padding: 5px;
     color: #00FF00;
-    text-decoration: underline;
     font-weight: bold;
 }
 
 .distant-overtime {
     padding: 5px;
     color: black;
-    text-decoration: underline;
     font-weight: bold;
 }
 
@@ -164,6 +162,10 @@ hr {
 a {
     padding: 5px;
     color: #00FF00;
-    text-decoration: underline;
     font-weight: bold;
+    text-decoration:none
+}
+
+a:hover {
+    text-decoration:underline;
 }

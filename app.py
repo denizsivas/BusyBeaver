@@ -312,13 +312,18 @@ def my_utility_processor():
     def cw_now():
         return datetime.utcnow().isocalendar()[1]
 
+    def numberofday_now():
+        dt = datetime.utcnow()
+        day = dt.strftime('%A')
+        return dt.weekday() + 1, day
+
     def time_remaining(target_date):
         target = date.fromisoformat(target_date)
         now = datetime.now().date()
         remaining_days = (target - now).days
         return remaining_days
 
-    return dict(date_now=date_now, elapsed_time=elapsed_time, time_remaining=time_remaining, cw_now=cw_now)
+    return dict(date_now=date_now, elapsed_time=elapsed_time, time_remaining=time_remaining, cw_now=cw_now, numberofday_now=numberofday_now)
 
 
 if __name__ == "__main__":

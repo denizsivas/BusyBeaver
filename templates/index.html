@@ -12,7 +12,7 @@
             <th>Task</th>
             <th>Date Added</th>
             <th>Time Elapsed</th>
-            <th>Actions</th>
+            <th colspan="3">Actions</th>
         </tr>
         {% for task in tasks %}
             <tr>
@@ -21,7 +21,11 @@
                 <td>{{ elapsed_time(task.date_created) }}  </td>
                 <td>
                     <a class ="distant" href="/delete/{{task.id}}">Delete</a>
+                </td>
+                <td>
                     <a class ="distant" href="/update/{{task.id}}">Update</a>
+                </td>
+                <td>
                     <a class ="distant" href="/done/{{task.id}}">Done</a>
                 </td>
             </tr>

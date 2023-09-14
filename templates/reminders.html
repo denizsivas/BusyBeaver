@@ -17,7 +17,7 @@
             <th>Cycle</th>
             <th>Target Date</th>
             <th>Time Remaining [days]</th>
-            <th>Actions</th>
+            <th colspan="3">Actions</th>
         </tr>
         {% for reminder in reminders %}
             {% if time_remaining(reminder.date_target) <= 0 %}
@@ -30,8 +30,14 @@
                 <td>{{ time_remaining(reminder.date_target) }}</td>
                 <td>
                     <a class ="distant-overtime" href="/delete_reminder/{{reminder.id}}">Delete</a>
+                </td>
+                <td>
                     <a class ="distant-overtime" href="/update_reminder/{{reminder.id}}">Update</a>
-                    <a class ='distant-overtime' href="/next_reminder/{{reminder.id}}">Remind Next</a>
+                </td>
+                <td>
+                    {% if reminder.cycle != 'once' %}
+                        <a class ='distant-overtime' href="/next_reminder/{{reminder.id}}">Remind Next</a>
+                    {% endif %}
                 </td>
             </tr>
             {% else %}
@@ -44,8 +50,14 @@
                 <td>{{ time_remaining(reminder.date_target) }}</td>
                 <td>
                     <a class ="distant" href="/delete_reminder/{{reminder.id}}">Delete</a>
+                </td>
+                <td>
                     <a class ="distant" href="/update_reminder/{{reminder.id}}">Update</a>
-                    <a class ='distant' href="/next_reminder/{{reminder.id}}">Remind Next</a>
+                </td>
+                <td>
+                    {% if reminder.cycle != 'once' %}
+                        <a class ='distant' href="/next_reminder/{{reminder.id}}">Remind Next</a>
+                    {% endif %}
                 </td>
             </tr>
             {% endif %}
