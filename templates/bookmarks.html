@@ -28,10 +28,10 @@
                 <td>{{ bookmark.date_created.date() }}</td>
                 <td>{{ bookmark.comment }}</td>
                 <td>
-                    <a class ="distant" href="/delete_bookmark/{{bookmark.id}}">Delete</a>
+                    <a class ="distant" href="/update_bookmark/{{bookmark.id}}"><i class="bi bi-pencil"></i></a>
                 </td>
                 <td>
-                    <a class ="distant" href="/update_bookmark/{{bookmark.id}}">Update</a>
+                    <a class ="distant" href="/delete_bookmark/{{bookmark.id}}"><i class="bi bi-trash"></i></a>
                 </td>
             </tr>
         {% endfor %}
