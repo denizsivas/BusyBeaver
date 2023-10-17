@@ -20,6 +20,15 @@ class Todo(db.Model):
         return '<Task %r>' % self.id
 
 
+class Notes(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.String(400), nullable=False)
+    date_created = db.Column(db.DateTime, default=datetime.now())
+
+    def __repr__(self):
+        return '<Note %r' % self.id
+
+
 class Bookmarks(db.Model):
     __bind_key__ = 'bookmark'
     id = db.Column(db.Integer, primary_key=True)
@@ -264,14 +273,64 @@ def bookmarks_view():
         return render_template('bookmarks.html', bookmarks=bookmarks)
 
 
-@app.route('/notes_view')
+@app.route('/notes_view', methods=['POST', 'GET'])
 def notes_view():
-    return render_template('under_construction.html')
+    if request.method == 'POST':
+        if request.form['content'] == '':
+            error_message = 'Note content cannot be empty.'
+            flash(error_message, category='error')
+            return redirect('/notes_view')
+        else:
+            note_content = request.form['content']
+            new_note = Notes(content=note_content, date_created=datetime.now())
+            try:
+                db.session.add(new_note)
+                db.session.commit()
+            except:
+                error_message = 'There was a problem adding your note.'
+                return render_template('not_found.html', error_message=error_message)
+            return redirect('/notes_view')
+    else:
+        notes = Notes.query.order_by(Notes.date_created).all()
+        return render_template('notes.html', notes=notes)
+
+
+@app.route('/update_note/<int:id>', methods=['GET', 'POST'])
+def update_note(id):
+    note = Notes.query.get_or_404(id)
+    if request.method == 'POST':
+        if request.form['content'] == '':
+            error_message = 'One of the fields is missing.'
+            flash(error_message, 'error')
+            return redirect('/notes_view')
+        else:
+            note.content = request.form['content']
+            try:
+                db.session.commit()
+                return redirect('/notes_view')
+            except:
+                error_message = 'There was an issue updating your note.'
+                return render_template('not_found.html', error_message=error_message)
+    else:
+        return render_template('notes_update.html', note=note)
+
+
+@app.route('/delete_note/<int:id>')
+def delete_note(id):
+    note_to_delete = Notes.query.get_or_404(id)
+    try:
+        db.session.delete(note_to_delete)
+        db.session.commit()
+        return redirect('/notes_view')
+    except:
+        error_message = 'There was a problem deleting that note.'
+        return render_template('not_found.html', error_message=error_message)
 
 
 @app.route('/purchasing_view')
 def purchasing_view():
     return render_template('under_construction.html')
+
 
 @app.route('/stats_view')
 def stats_view():
