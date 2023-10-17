@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block head %}
+{% endblock %}
+{% block body %}
+{% include 'header_section.html' %}
+<div class="content">
+    <h1>Update Note</h1>
+    <form action="/update_note/{{note.id}}" method="POST">
+        <textarea id="note_input_content" name="content" rows="5" cols="60" style="outline:color" required>{{note.content}}</textarea>
+        <p>
+            <input type = "submit" value = "Update Note">
+        </p>
+    </form>
+</div>
+{% endblock %}

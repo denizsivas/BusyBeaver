@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block head %}
+{% endblock %}
+{% block body %}
+{% include 'header_section.html' %}
+{% include 'messages.html' %}
+<div class="content">
+    {% if notes|length < 1 %}
+    <h4>There are no notes yet. ¯\_(ツ)_/¯ </h4>
+    {% else %}
+    <table>
+        <tr>
+            <th>Note</th>
+            <th>Date Added</th>
+            <th colspan="2">Actions</th>
+        </tr>
+        {% for note in notes %}
+            <tr>
+                <td>{{ note.content }}</td>
+                <td>{{ note.date_created.date() }}</td>
+                <td>
+                    <a class ="distant" href="/update_note/{{note.id}}"><i class="bi bi-pencil-square"></i></a>
+                </td>
+                <td>
+                    <a class ="distant" href="/delete_note/{{note.id}}"><i class="bi bi-trash3"></i></a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+    <form action="/notes_view" method="POST">
+        <textarea id="note_input_content" placeholder="enter a note" name="content" rows="5" cols="60" style="outline:color" required></textarea>
+        <p>
+        <input type = "submit" value = "Add Note">
+        </p>
+    </form>
+    {% include 'footer_section.html' %}
+</div>
+{% endblock %}
