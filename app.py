@@ -1,10 +1,15 @@
 from flask import Flask, render_template, request, redirect, flash
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime, timezone, timedelta, date
+from datetime import datetime, timedelta, date
 from dateutil.relativedelta import relativedelta
+import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+app.secret_key = os.getenv("SECRET_KEY")
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///todos.db'
 app.config['SQLALCHEMY_BINDS'] = {'bookmark': 'sqlite:///bookmarks.db', 'reminder': 'sqlite:///reminders.db'}
 db = SQLAlchemy(app)
@@ -353,6 +358,63 @@ def stats_view():
                            close_reminders=close_reminders)
 
 
+@app.route('/weather_view')
+def weather_view():
+    weather_url = os.getenv("WEATHERAPI")
+    lat_home = os.getenv("LAT_HOME")
+    lon_home = os.getenv("LON_HOME")
+    lat_work = os.getenv("LAT_WORK")
+    lon_work = os.getenv("LON_WORK")
+    api_key = os.getenv("API_KEY")
+    payload_home = {"lat": lat_home, "lon": lon_home, "units": 'metric', "appid": api_key}
+    # Calling the weather api for home
+    response_home = requests.get(weather_url, params=payload_home)
+    data_home = response_home.json()
+    weather_info = data_home.get('weather')
+    description = weather_info[0]['description']
+    main_info = data_home.get('main')
+    temp = main_info['temp']
+    temp_min = main_info['temp_min']
+    temp_max = main_info['temp_max']
+    humidity = main_info['humidity']
+    wind = data_home.get('wind')
+    speed = wind['speed']
+    degree = wind['deg']
+    sys = data_home.get('sys')
+    sunrise = sys['sunrise']
+    sunset = sys['sunset']
+    date_conv_sunrise = (datetime.utcfromtimestamp(sunrise) + timedelta(hours=3)).strftime('%H:%M:%S')
+    date_conv_sunset = (datetime.utcfromtimestamp(sunset) + timedelta(hours=3)).strftime('%H:%M:%S')
+    home_weather_data = {'description': description, 'temperature': temp, 'temp_min': temp_min, 'temp_max': temp_max,
+                         'humidity': humidity, 'wind_speed': speed, 'wind_degree': degree,
+                         'converted_sunrise': date_conv_sunrise, 'converted_sunset': date_conv_sunset}
+    # Calling the weather api for work
+    payload_work = {"lat": lat_work, "lon": lon_work, "units": 'metric', "appid": api_key}
+    response_work = requests.get(weather_url, params=payload_work)
+    data_work = response_work.json()
+    weather_info = data_work.get('weather')
+    description = weather_info[0]['description']
+    main_info = data_work.get('main')
+    temp = main_info['temp']
+    temp_min = main_info['temp_min']
+    temp_max = main_info['temp_max']
+    humidity = main_info['humidity']
+    wind = data_work.get('wind')
+    speed = wind['speed']
+    degree = wind['deg']
+    sys = data_work.get('sys')
+    sunrise = sys['sunrise']
+    sunset = sys['sunset']
+
+    date_conv_sunrise = (datetime.utcfromtimestamp(sunrise) + timedelta(hours=3)).strftime('%H:%M:%S')
+    date_conv_sunset = (datetime.utcfromtimestamp(sunset) + timedelta(hours=3)).strftime('%H:%M:%S')
+    work_weather_data = {'description': description, 'temperature': temp, 'temp_min': temp_min, 'temp_max': temp_max,
+                         'humidity': humidity, 'wind_speed': speed, 'wind_degree': degree,
+                         'converted_sunrise': date_conv_sunrise, 'converted_sunset': date_conv_sunset}
+
+    return render_template('weatherinfo.html', weather_at_home=home_weather_data, weather_at_work=work_weather_data)
+
+
 @app.context_processor
 def my_utility_processor():
     def elapsed_time(then, now=datetime.now(), interval="default"):
@@ -380,7 +442,8 @@ def my_utility_processor():
         remaining_days = (target - now).days
         return remaining_days
 
-    return dict(date_now=date_now, elapsed_time=elapsed_time, time_remaining=time_remaining, cw_now=cw_now, numberofday_now=numberofday_now)
+    return dict(date_now=date_now, elapsed_time=elapsed_time, time_remaining=time_remaining, cw_now=cw_now,
+                numberofday_now=numberofday_now)
 
 
 if __name__ == "__main__":

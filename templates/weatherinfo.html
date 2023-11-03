@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block head %}
+{% endblock %}
+{% block body %}
+{% include 'header_section.html' %}
+
+<div class="row">
+  <div class="column">
+    <div class="card">
+        <p> <u>Current weather at <b>HOME</b></u></p>
+        <p> Summary: {{ weather_at_home["description"] }} </p>
+        <p> Temperature: {{ weather_at_home["temperature"] }} </p>
+        <p> Wind: {{ weather_at_home["wind_speed"] }} </p>
+        <p> Humidity: {{ weather_at_home["humidity"] }}</p>
+        <p> Sunrise: {{ weather_at_home["converted_sunrise"] }}</p>
+        <p> Sunset: {{ weather_at_home["converted_sunset"] }}</p>
+    </div>
+  </div>
+  <div class="column">
+    <div class="card">
+        <p> <u>Current weather at <b>WORK</b></u></p>
+        <p> Summary: {{ weather_at_work["description"] }} </p>
+        <p> Temperature: {{ weather_at_work["temperature"] }} </p>
+        <p> Wind: {{ weather_at_work["wind_speed"] }} </p>
+        <p> Humidity: {{ weather_at_work["humidity"] }}</p>
+        <p> Sunrise: {{ weather_at_work["converted_sunrise"] }}</p>
+        <p> Sunset: {{ weather_at_work["converted_sunset"] }}</p>
+    </div>
+  </div>
+</div>
+{% include 'footer_section.html' %}
+{% endblock %}
