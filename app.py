@@ -34,6 +34,17 @@ class Notes(db.Model):
         return '<Note %r' % self.id
 
 
+class Locations(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(200), nullable=False)
+    latitude = db.Column(db.Numeric(precision=8, asdecimal=False, decimal_return_scale=None))
+    longitude = db.Column(db.Numeric(precision=8, asdecimal=False, decimal_return_scale=None))
+    suggestion = db.Column(db.Integer, default=0)
+
+    def __repr__(self):
+        return '<Location %r' % self.id
+
+
 class Bookmarks(db.Model):
     __bind_key__ = 'bookmark'
     id = db.Column(db.Integer, primary_key=True)
@@ -358,61 +369,59 @@ def stats_view():
                            close_reminders=close_reminders)
 
 
-@app.route('/weather_view')
+@app.route('/weather_view', methods=['POST', 'GET'])
 def weather_view():
-    weather_url = os.getenv("WEATHERAPI")
-    lat_home = os.getenv("LAT_HOME")
-    lon_home = os.getenv("LON_HOME")
-    lat_work = os.getenv("LAT_WORK")
-    lon_work = os.getenv("LON_WORK")
-    api_key = os.getenv("API_KEY")
-    payload_home = {"lat": lat_home, "lon": lon_home, "units": 'metric', "appid": api_key}
-    # Calling the weather api for home
-    response_home = requests.get(weather_url, params=payload_home)
-    data_home = response_home.json()
-    weather_info = data_home.get('weather')
-    description = weather_info[0]['description']
-    main_info = data_home.get('main')
-    temp = main_info['temp']
-    temp_min = main_info['temp_min']
-    temp_max = main_info['temp_max']
-    humidity = main_info['humidity']
-    wind = data_home.get('wind')
-    speed = wind['speed']
-    degree = wind['deg']
-    sys = data_home.get('sys')
-    sunrise = sys['sunrise']
-    sunset = sys['sunset']
-    date_conv_sunrise = (datetime.utcfromtimestamp(sunrise) + timedelta(hours=3)).strftime('%H:%M:%S')
-    date_conv_sunset = (datetime.utcfromtimestamp(sunset) + timedelta(hours=3)).strftime('%H:%M:%S')
-    home_weather_data = {'description': description, 'temperature': temp, 'temp_min': temp_min, 'temp_max': temp_max,
-                         'humidity': humidity, 'wind_speed': speed, 'wind_degree': degree,
-                         'converted_sunrise': date_conv_sunrise, 'converted_sunset': date_conv_sunset}
-    # Calling the weather api for work
-    payload_work = {"lat": lat_work, "lon": lon_work, "units": 'metric', "appid": api_key}
-    response_work = requests.get(weather_url, params=payload_work)
-    data_work = response_work.json()
-    weather_info = data_work.get('weather')
-    description = weather_info[0]['description']
-    main_info = data_work.get('main')
-    temp = main_info['temp']
-    temp_min = main_info['temp_min']
-    temp_max = main_info['temp_max']
-    humidity = main_info['humidity']
-    wind = data_work.get('wind')
-    speed = wind['speed']
-    degree = wind['deg']
-    sys = data_work.get('sys')
-    sunrise = sys['sunrise']
-    sunset = sys['sunset']
-
-    date_conv_sunrise = (datetime.utcfromtimestamp(sunrise) + timedelta(hours=3)).strftime('%H:%M:%S')
-    date_conv_sunset = (datetime.utcfromtimestamp(sunset) + timedelta(hours=3)).strftime('%H:%M:%S')
-    work_weather_data = {'description': description, 'temperature': temp, 'temp_min': temp_min, 'temp_max': temp_max,
-                         'humidity': humidity, 'wind_speed': speed, 'wind_degree': degree,
-                         'converted_sunrise': date_conv_sunrise, 'converted_sunset': date_conv_sunset}
-
-    return render_template('weatherinfo.html', weather_at_home=home_weather_data, weather_at_work=work_weather_data)
+    if request.method == 'POST':
+        if request.form['description'] == '' or request.form['latitude'] == '' or request.form['longitude'] == '':
+            error_message = 'One of the fields is missing.'
+            flash(error_message, 'error')
+            return redirect('/weather_view')
+        else:
+            location_description = request.form['description']
+            location_latitude = request.form['latitude']
+            location_longitude = request.form['longitude']
+            new_location = Locations(description=location_description, latitude=location_latitude,
+                                     longitude=location_longitude)
+            try:
+                db.session.add(new_location)
+                db.session.commit()
+            except:
+                error_message = 'There was a problem adding your location.'
+                return render_template('not_found.html', error_message=error_message)
+            return redirect('/weather_view')
+    else:
+        weather_url = os.getenv("WEATHERAPI")
+        api_key = os.getenv("API_KEY")
+        locations = Locations.query.all()
+        locations_weather_data = {}
+        for location in locations:
+            payload = {"lat": location.latitude, "lon": location.longitude, "units": 'metric', "appid": api_key}
+            # Calling the weather api
+            response = requests.get(weather_url, params=payload)
+            data = response.json()
+            weather_info = data.get('weather')
+            description = weather_info[0]['description']
+            main_info = data.get('main')
+            temp = main_info['temp']
+            temp_min = main_info['temp_min']
+            temp_max = main_info['temp_max']
+            humidity = main_info['humidity']
+            wind = data.get('wind')
+            speed = wind['speed']
+            degree = wind['deg']
+            sys = data.get('sys')
+            sunrise = sys['sunrise']
+            sunset = sys['sunset']
+            country = sys['country']
+            # read country data for timezone calculations
+            date_conv_sunrise = (datetime.utcfromtimestamp(sunrise) + timedelta(hours=3)).strftime('%H:%M:%S')
+            date_conv_sunset = (datetime.utcfromtimestamp(sunset) + timedelta(hours=3)).strftime('%H:%M:%S')
+            weather_data = {'description': description, 'temperature': temp, 'temp_min': temp_min, 'temp_max': temp_max,
+                            'humidity': humidity, 'wind_speed': speed, 'wind_degree': degree,
+                            'converted_sunrise': date_conv_sunrise, 'converted_sunset': date_conv_sunset,
+                            'country': country}
+            locations_weather_data[location.description] = weather_data
+        return render_template('weatherinfo.html', locations_weather_data=locations_weather_data)
 
 
 @app.context_processor

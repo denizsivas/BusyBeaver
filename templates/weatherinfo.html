@@ -1,32 +1,40 @@
 {% extends 'base.html' %}
+
 {% block head %}
 {% endblock %}
 {% block body %}
 {% include 'header_section.html' %}
-
+{% include 'messages.html' %}
 <div class="row">
-  <div class="column">
-    <div class="card">
-        <p> <u>Current weather at <b>HOME</b></u></p>
-        <p> Summary: {{ weather_at_home["description"] }} </p>
-        <p> Temperature: {{ weather_at_home["temperature"] }} </p>
-        <p> Wind: {{ weather_at_home["wind_speed"] }} </p>
-        <p> Humidity: {{ weather_at_home["humidity"] }}</p>
-        <p> Sunrise: {{ weather_at_home["converted_sunrise"] }}</p>
-        <p> Sunset: {{ weather_at_home["converted_sunset"] }}</p>
-    </div>
-  </div>
-  <div class="column">
-    <div class="card">
-        <p> <u>Current weather at <b>WORK</b></u></p>
-        <p> Summary: {{ weather_at_work["description"] }} </p>
-        <p> Temperature: {{ weather_at_work["temperature"] }} </p>
-        <p> Wind: {{ weather_at_work["wind_speed"] }} </p>
-        <p> Humidity: {{ weather_at_work["humidity"] }}</p>
-        <p> Sunrise: {{ weather_at_work["converted_sunrise"] }}</p>
-        <p> Sunset: {{ weather_at_work["converted_sunset"] }}</p>
-    </div>
-  </div>
+    {% if locations_weather_data|length < 1 %}
+    <h4>There are no locations yet. ¯\_(ツ)_/¯ </h4>
+    {% else %}
+    {% for k, v in locations_weather_data.items() %}
+        <div class="column">
+          <div class="card">
+              <p><b><i class="bi bi-geo-alt"> {{ k }} </i></b></p>
+              <p> <b> {{ v["description"] }} </b> </p>
+              <p> <i class="bi bi-thermometer-half"></i> {{ v["temperature"] }} °C  </p>
+              <p> <i class="bi bi-wind"></i> {{ v["wind_speed"] }} m/s  @ {{ v['wind_degree']}} degree </p>
+              <p> <i class="bi bi-moisture"></i> {{ v["humidity"]  }} % </p>
+              <p> <i class="bi bi-sunrise"></i> {{ v["converted_sunrise"] }}  </p>
+              <p> <i class="bi bi-sunset"></i> {{ v["converted_sunset"] }}  </p>
+          </div>
+        </div>
+    {% endfor %}
+    {% endif %}
+</div>
+
+<div class="location_form">
+        <form action="/weather_view" method="POST">
+        <label for="description">Description:</label>
+            <input type = "text" name="description" id="location_desc" placeholder="description" style="outline:color;" required>
+        <label for="latitude">Latitude:</label>
+            <input type = "text" name="latitude" id="location_lat" placeholder="latitude" style="outline:color;" required>
+        <label for="longitude">Longitude:</label>
+            <input type = "text" name="longitude" id="location_long" placeholder="longitude" style="outline:color;" required>
+            <input type = "submit" value = "Add Location">
+        </form>
 </div>
 {% include 'footer_section.html' %}
 {% endblock %}
