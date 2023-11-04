@@ -26,10 +26,6 @@ db.create_all()
 The content for your dot env should be the following:
    * secret_key
    * weatherapi
-   * lat_home
-   * lon_home
-   * lat_work
-   * lon_work
    * api_key
       
 3. Upload your files to a server
