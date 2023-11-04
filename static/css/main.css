@@ -199,7 +199,6 @@ a:hover {
 /* Float four columns side by side */
 .column {
   float: left;
-  width: 50%;
   padding: 0 10px;
 }
 
@@ -224,4 +223,10 @@ a:hover {
     display: block;
     margin-bottom: 20px;
   }
+}
+
+.location_form {
+    margin-left: 5%;
+    padding: 5px;
+    width: 90%
 }
