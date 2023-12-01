@@ -343,11 +343,6 @@ def delete_note(id):
         return render_template('not_found.html', error_message=error_message)
 
 
-@app.route('/purchasing_view')
-def purchasing_view():
-    return render_template('under_construction.html')
-
-
 @app.route('/stats_view')
 def stats_view():
     tasks_count = Todo.query.filter_by(completed=0).count()
